@@ -5,3 +5,7 @@ The program takes as input
  - the string to be parsed
 
 The algorithm is implemented with dynamic programming.
+
+A demo execution is:
+
+	$ ./CYK grammar.cnf
