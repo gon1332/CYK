@@ -1,0 +1,8 @@
+# no object (.o) files
+*.o
+
+# no temporary files
+*~
+
+# ignore root TODO file
+/TODO

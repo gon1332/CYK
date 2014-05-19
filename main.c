@@ -11,8 +11,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "includes/ErrorChecks.h"
-#include "includes/GrammarStore.h"
+#include "include/ErrorChecks.h"
+#include "include/GrammarStore.h"
 
 #define RuleReader		/* Rule Reader */
 #define ProductionReader	/* Production Reader*/
