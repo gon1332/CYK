@@ -83,25 +83,3 @@ extern void insert_production(Rule *rule, char *prod)
 	new_prod->next = NULL;
 	rule->last = new_prod;
 }
-
-
-/*/* int list_is_empty(void)*/
-/* * */
-/* * Checks if the list is empty. If it is returns 1, otherwise 0.*/
-/* */
-/*int list_is_empty(void){*/
-/*	if(root->next == root && root->prev == root)*/
-/*		return(1);*/
-/*	return(0);*/
-/*}*/
-
-/*/* void print_list(void)*/
-/* * */
-/* * Prints the list.*/
-/* */
-/*void print_list(void){*/
-/*	env_T *curr;*/
-/*	*/
-/*	for(curr = root->next; curr != root; curr = curr->next)*/
-/*		printf("%s=%s\n", curr->name, curr->value);*/
-/*}*/
