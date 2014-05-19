@@ -1,11 +1,12 @@
-Implementation of CYK parsing algorithm.
+Implementation of on-line CYK parsing algorithm.
 
 The program takes as input
  - the grammar in CNF
  - the string to be parsed
 
-The algorithm is implemented with dynamic programming.
+The algorithm is:
+ - implemented with dynamic programming
+ - the on-line version of CYK
 
 A demo execution is:
-
 	$ ./CYK grammar.cnf
