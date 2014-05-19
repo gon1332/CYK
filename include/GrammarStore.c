@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
 #include "GrammarStore.h"
 #include "ErrorChecks.h"
 
@@ -53,8 +52,8 @@ extern Rule *insert_rule(const char *name)
 
 	SafeCall( new_rule->name = strdup(name) );
 	new_rule->prods = NULL;
-	new_rule->last = NULL;
-	new_rule->next = NULL;
+	new_rule->last  = NULL;
+	new_rule->next  = NULL;
 
 	if (!head)
 		head = new_rule;
