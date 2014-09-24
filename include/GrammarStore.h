@@ -1,5 +1,5 @@
-#ifndef __GRAMMAR_STORE__
-#define __GRAMMAR_STORE__
+#ifndef GRAMMARSTORE_H_ZHTYLASQ
+#define GRAMMARSTORE_H_ZHTYLASQ
 
 typedef struct __production {
 	char *str;			/* The production */
@@ -28,8 +28,13 @@ extern CNFG *get_grammar(void);
 
 /* Rules */
 extern Rule *insert_rule(const char *name);
+extern Rule *search_rule(const char *name);
 
 /* Productions */
-extern void insert_production(Rule *rule, char *prod);
+extern void insert_production(Rule *rule, const char *prod);
+extern Production *search_production(Rule *rule, const char *prod);
 
-#endif	/* __GRAMMAR_STORE__ */
+/* Specials */
+extern char *match_production(const char *prod);
+
+#endif /* GRAMMARSTORE_H_ZHTYLASQ */
