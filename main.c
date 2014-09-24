@@ -1,150 +1,217 @@
-/**********************#############################*****************************
- *			CYK Parser for CNF Grammars				*
- *			###########################				*
- * Ioannidis Christos, hrioan@inf.uth.gr					*
- * Konstadelias Ioannis, konstadel@inf.uth.gr					*
- * University of Thessaly, 2014							*
- *										*
- * This program parses an input string using the CYK parser for CNF grammars.	*
- * The parser is implemented with the dynamic programming method.		*
- ********************************************************************************/
+/**********************#############################***************************
+ *                      CYK Parser for CNF Grammars                           *
+ *                      ###########################                           *
+ * Ioannidis Christos, hrioan@inf.uth.gr                                      *
+ * Konstadelias Ioannis, konstadel@inf.uth.gr                                 *
+ * University of Thessaly, 2014                                               *
+ *										                                      *
+ * This program parses an input string using the CYK parser for CNF grammars. *
+ * The parser is implemented with the dynamic programming method.		      *
+ *****************************************************************************/
+#include <libxml/xmlreader.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include "include/ErrorChecks.h"
 #include "include/GrammarStore.h"
+#include "include/strdup.h"
 
-#define RuleReader		/* Rule Reader */
-#define ProductionReader	/* Production Reader*/
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Parse XML file including CNF grammar.
+ * --
+ *  The storage of the grammar in main memory is done in one pass during the
+ *  parsing.
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+/* STATES: Is the current node a Left-Hand side or a Right-Hand side? */
+#define xHS -1
+#define LHS 0
+#define RHS 1
 
-#define MAX_IN_CHARS 100	/* Without including NULL */
-char *input_str = NULL;
+/* TRIVIAL BOOLEAN FLAGS: For printCNF, is it time to print an arrow? */
+#define YES 1
+#define NO  0
 
-/*
- * void CYK(CNFG *grammar)
- */
-void CYK(CNFG *grammar)
+/* STATE variables used for parsing */
+int handside_of_operand = xHS;
+int place_arrow = NO;
+
+/* XML PARSING FUNCTIONS */
+/* Current Rule */
+Rule *rule;
+/* Store the CNF grammar during parsing for. Also print under debugging. */
+// #define DEBUG
+void storeCNF(int type, xmlChar *name, xmlChar *value);
+/* Process an XML node. */
+void processNode(xmlTextReaderPtr reader);
+/* Walk down the XML tree and read it. */
+CNFG *streamFile(char *filename);
+
+
+/* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * Parse input string with CYK (aka CKY) algorithm.
+ * --
+ *  Array M[][] is a string container.
+ *  I use strings in order to simulate sets data type.
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
+int parseCYK(char string[], CNFG *grammar)
 {
-	// Code goes here
+    /* Initialize M to a zero-indexed, two dimensional array of empty sets. */
+    int len = strlen(string);
+    char *M[len][len];
+    for (int i = 0; i < len; i ++)
+        for (int j = 0; j < len; j++)
+            M[i][j] = 0;
+
+    /*  */
+    for (int i = 0; i < len; i++) {
+        /* Convert a character to string. */
+        char prod[5] = {0};
+        sprintf(prod, "%c", string[i]);
+        /* Fill the first row of sets. */
+        char *temp = match_production(prod);
+        if (temp == 0) {
+            printf("CYK: Input string contains unknown terminal symbol "
+                   "`%c\'\n", string[i]);
+            return 0;
+        } else {
+            M[i][i] = temp;
+        }
+    }
+
+    putchar('\n');
+    for (int i = 0; i < len; i++) {
+        for (int j = 0; j < len; j++) {
+            fflush(stdout);
+            if (M[i][j] != 0)
+                printf("%s   ", M[i][j]);
+            else
+                printf("    ");
+        }
+        putchar('\n');
+    }
+
+    /* every substring length */
+    for (int l = 1; l < len; l++) {
+        /* every starting location for a substring of length l */
+        for (int r = 0; r < len - l; r++) {
+            /* every split of the substring at string[r : r + l] */
+            for (int t = 0; t < l; t++) {
+                // DO STUF IN HERE
+            }
+        }
+    }
+
+    return 1;
 }
 
-/*
- * void scan (FILE *input)
- *
- * Scans the input file line by line and parses each line recognizing the left-hand
- * sides (LHS) and right-hand sides (RHS) of the grammar rules. It also constructs
- * and returns the pointer to the grammar in the main memory for further use.
- */
-CNFG *scan (FILE *input);
 
-/*
- * Main Program
- * - Reads the grammar from the file
- * - Run CYK on it
- */
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
-	FILE *f_in;
-	CNFG *grammar;
-
-	if (2 != argc) {
+	if (argc != 2) {
 		fprintf(stderr, "--info-----\n");
-		fprintf(stderr, "#\tCYK parser usage: %s <input_file.cnf>\n", argv[0]);
+		fprintf(stderr, "#\tCYK parser usage: %s <xml_file.jff>\n", argv[0]);
 		fprintf(stderr, "--warning--\n");
 		fprintf(stderr, "#\tThe grammar in the input file must be in Chomsky");
 		fprintf(stderr, "Normal Form.\n#\tIf not, the parser will not complain");
 		fprintf(stderr, ". The execution will not\n#\tstop. The result will be");
 		fprintf(stderr, " more than 99.1%% logically incorrect.\n");
-		return(1);
+		return 1;
 	}
-	
-	SafeCall( f_in = fopen(argv[1], "r") );
 
-	grammar = scan(f_in);
-	print_grammar(grammar);
+    CNFG *grammar = streamFile(argv[1]);
+    fputs("Grammar loaded...\n", stdout);
+    print_grammar(grammar);
 
-	/* Remove when CYK is implemented
-	CYK(grammar);
-	*/
+    char in_string[100] = {0};
+    fprintf(stdout, "Enter the input string: ");
+    scanf("%99s", in_string);
 
-	fclose(f_in);
+    parseCYK(in_string, grammar);
 
-	return(0);
+    return 0;
 }
 
 
-CNFG *scan (FILE *input)
+void storeCNF(int type, xmlChar *name, xmlChar *value)
 {
-	char line[100] = {0};
-	char str_in = 0;	/* checks if an input string is given */
-	
-	init_grammar();
-	
-	while (fgets(line, 99, input)) {
-		/* Check if it's time to parse the input string */
-		int i;
-		for (i = 0; ' ' == line[i]; i++)	/* space sucker */
-			;
-		if ('\\' == line[i] && '&' == line[i + 1]) {
-			str_in = 1;
-			break;
-		}
+    // If Node is start of an element:
+    if (1 == type) {
+        // If element is <left>:
+        if (xmlStrEqual(name, xmlCharStrndup("left", 4)))
+            handside_of_operand = LHS;
+        // If element is <right>:
+        else if (xmlStrEqual(name, xmlCharStrndup("right", 5)))
+            handside_of_operand = RHS;
+    }
+    // If Node is text:
+    else if (3 == type) {
+        if (handside_of_operand == LHS) {
+#ifdef DEBUG
+            printf("%s", value);
+#endif
+            rule = search_rule((char *)value);  // a hack-cast
+            if (!rule)
+                rule = insert_rule((char *)value);  // a hack-cast
+            place_arrow = YES;
+        } else if (handside_of_operand == RHS) {
+#ifdef DEBUG
+            printf("%s\n", value);
+#endif
+            insert_production(rule, (char *)value); // a hack-cast
+        }
+    }
 
-		/* Scan 'n Parse the CNF Grammar */
-		int lpos = 0;
-		Rule *rule;
-		
-		RuleReader {
-			char buffer[20] = {0};
-			int i, j;
-			for (i = 0; ' ' == line[i]; i++)	/* space sucker */
-				;
-			for (j = 0 ; ':' != line[i]; i++, j++)
-				if (' ' == line[i])
-					continue;
-				else
-					buffer[j] = line[i];
-			buffer[j] = '\0';
+#ifdef DEBUG
+    if (place_arrow == YES && handside_of_operand == LHS) {
+        printf("  ->  ");
+        place_arrow = NO;
+    }
+#endif
+}
 
-			lpos = i;
-			rule = insert_rule(buffer);
-		}
+void processNode(xmlTextReaderPtr reader)
+{
+    /* handling of a node in the tree */
+    xmlChar *name, *value;
+    int type;
 
-		ProductionReader {
-			char buffer[30] = {0};
-			int i, j;
-			for (i = lpos + 1; ' ' == line[i]; i++)	/* space sucker */
-				;
-			for (j = 0; line[i]; i++) {
-				for (; ' ' == line[i]; i++)	/* space sucker */
-					;
-				if (('|' == line[i]) || (';' == line[i])) {
-					buffer[j] = '\0';
-					insert_production(rule, buffer);
-					memset(buffer, '\0', j);
-					j = 0;
-					continue;
-				} else {
-					buffer[j++] = line[i];
-				}
-			}
-		}
-	}
+    name = xmlTextReaderName(reader);
+    if (name == NULL)
+        name = xmlStrdup(BAD_CAST "--");
+    value = xmlTextReaderValue(reader);
 
-	if (str_in) {
-		/* Accept an input of maximum MAX_IN_CHARS characters */
-		SafeCall( input_str = malloc(MAX_IN_CHARS + 1) );
-		if (!fgets(line, MAX_IN_CHARS, input)) {
-			fprintf(stderr, "Syntax error: Missing input string.\n");
-			exit(1);
-		}
-		strncpy(input_str, line, MAX_IN_CHARS);
-		strncat(input_str, "\0", 1);
-	} else {
-		fprintf(stderr, "Syntax error: Missing \\& symbol.\n");
-		exit(1);
-	}
-	
-	
-	return(get_grammar());
+    type = xmlTextReaderNodeType(reader);
+
+    storeCNF(type, name, value);
+
+    xmlFree(name);
+    if (value)
+        xmlFree(value);
+}
+
+CNFG *streamFile(char *filename)
+{
+    xmlTextReaderPtr reader;
+    int ret;
+
+    /* Initialize grammar store. */
+    init_grammar();
+
+    reader = xmlNewTextReaderFilename(filename);
+    if (reader != NULL) {
+        ret = xmlTextReaderRead(reader);
+        while (ret == 1) {
+            processNode(reader);
+            ret = xmlTextReaderRead(reader);
+        }
+        xmlFreeTextReader(reader);
+        if (ret != 0) {
+            printf("%s : failed to parse\n", filename);
+        }
+    } else {
+        printf("Unable to open %s\n", filename);
+        exit(1);
+    }
+
+    return get_grammar();
 }
