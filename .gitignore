@@ -4,5 +4,8 @@
 # no temporary files
 *~
 
+# no executable
+cyk
+
 # ignore root TODO file
 /TODO
