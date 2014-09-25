@@ -2,7 +2,7 @@
 	<type>grammar</type>
 	<!--The list of productions.-->
 	<production>
-        <left>S</left>
+		<left>S</left>
 		<right>JO</right>
 	</production>
 	<production>
@@ -30,40 +30,24 @@
 		<right>AV</right>
 	</production>
 	<production>
-		<left>B</left>
-		<right>AV</right>
-	</production>
-	<production>
-		<left>B</left>
-		<right>i</right>
-	</production>
-	<production>
-		<left>B</left>
-		<right>BL</right>
-	</production>
-	<production>
-		<left>L</left>
-		<right>DF</right>
-	</production>
-	<production>
-		<left>B</left>
-		<right>BQ</right>
-	</production>
-	<production>
-		<left>Q</left>
-		<right>CB</right>
-	</production>
-	<production>
-		<left>C</left>
-		<right>+</right>
-	</production>
-	<production>
-		<left>V</left>
-		<right>AV</right>
-	</production>
-	<production>
 		<left>A</left>
 		<right>*</right>
+	</production>
+	<production>
+		<left>B</left>
+		<right>AV</right>
+	</production>
+	<production>
+		<left>D</left>
+		<right>GP</right>
+	</production>
+	<production>
+		<left>F</left>
+		<right>GH</right>
+	</production>
+	<production>
+		<left>B</left>
+		<right>JO</right>
 	</production>
 	<production>
 		<left>B</left>
@@ -71,35 +55,35 @@
 	</production>
 	<production>
 		<left>B</left>
-		<right>JO</right>
+		<right>BQ</right>
 	</production>
 	<production>
-		<left>F</left>
-		<right>e</right>
+		<left>B</left>
+		<right>BL</right>
 	</production>
 	<production>
-		<left>F</left>
-		<right>GH</right>
+		<left>C</left>
+		<right>+</right>
 	</production>
 	<production>
-		<left>D</left>
-		<right>e</right>
+		<left>L</left>
+		<right>DF</right>
 	</production>
 	<production>
-		<left>D</left>
-		<right>GP</right>
+		<left>Q</left>
+		<right>CB</right>
+	</production>
+	<production>
+		<left>V</left>
+		<right>AV</right>
+	</production>
+	<production>
+		<left>B</left>
+		<right>VM</right>
 	</production>
 	<production>
 		<left>P</left>
 		<right>BH</right>
-	</production>
-	<production>
-		<left>G</left>
-		<right>[</right>
-	</production>
-	<production>
-		<left>H</left>
-		<right>]</right>
 	</production>
 	<production>
 		<left>V</left>
@@ -110,18 +94,6 @@
 		<right>BK</right>
 	</production>
 	<production>
-		<left>J</left>
-		<right>{</right>
-	</production>
-	<production>
-		<left>K</left>
-		<right>}</right>
-	</production>
-	<production>
-		<left>V</left>
-		<right>i</right>
-	</production>
-	<production>
 		<left>V</left>
 		<right>IN</right>
 	</production>
@@ -130,19 +102,63 @@
 		<right>DV</right>
 	</production>
 	<production>
-		<left>I</left>
-		<right>i</right>
-	</production>
-	<production>
-		<left>B</left>
-		<right>VM</right>
+		<left>E</left>
+		<right>=</right>
 	</production>
 	<production>
 		<left>M</left>
 		<right>EB</right>
 	</production>
 	<production>
-		<left>E</left>
-		<right>=</right>
+		<left>N</left>
+		<right>JO</right>
+	</production>
+	<production>
+		<left>L</left>
+		<right>GP</right>
+	</production>
+	<production>
+		<left>N</left>
+		<right>IN</right>
+	</production>
+	<production>
+		<left>L</left>
+		<right>GH</right>
+	</production>
+	<production>
+		<left>N</left>
+		<right>AV</right>
+	</production>
+	<production>
+		<left>B</left>
+		<right>i</right>
+	</production>
+	<production>
+		<left>N</left>
+		<right>i</right>
+	</production>
+	<production>
+		<left>I</left>
+		<right>i</right>
+	</production>
+	<production>
+		<left>V</left>
+		<right>i</right>
+	</production>
+	<production>
+		<left>K</left>
+		<right>)</right>
+	</production>
+	<production>
+		<left>J</left>
+		<right>(</right>
+	</production>
+	<production>
+		<left>H</left>
+		<right>]</right>
+	</production>
+	<production>
+		<left>G</left>
+		<right>[</right>
 	</production>
 </structure>
