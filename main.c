@@ -53,14 +53,14 @@ CNFG *streamFile(char *filename);
  *  Array M[][] is a string container.
  *  I use strings in order to simulate sets data type.
  * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * */
-int parseCYK(char string[], CNFG *grammar)
+int parseCYK(char string[])
 {
     /* Initialize M to a zero-indexed, two dimensional array of empty sets. */
     int len = strlen(string);
     char *M[len][len];
     for (int i = 0; i < len; i ++)
         for (int j = 0; j < len; j++)
-            M[i][j] = 0;
+            M[i][j] = strdup("");
 
     /*  */
     for (int i = 0; i < len; i++) {
@@ -78,30 +78,110 @@ int parseCYK(char string[], CNFG *grammar)
         }
     }
 
-    putchar('\n');
-    for (int i = 0; i < len; i++) {
-        for (int j = 0; j < len; j++) {
-            fflush(stdout);
-            if (M[i][j] != 0)
-                printf("%s   ", M[i][j]);
-            else
-                printf("    ");
-        }
-        putchar('\n');
-    }
-
     /* every substring length */
     for (int l = 1; l < len; l++) {
         /* every starting location for a substring of length l */
         for (int r = 0; r < len - l; r++) {
             /* every split of the substring at string[r : r + l] */
             for (int t = 0; t < l; t++) {
-                // DO STUF IN HERE
+#ifdef DEBUG
+                printf("(l, r, t) = (%d, %d, %d)\n==============\n", l, r, t);
+#endif
+
+                /* Initialize L and R */
+                char *L = malloc(strlen(M[r][r + t]) + 1);
+                strcpy(L, M[r][r + t]);
+                char *R = malloc(strlen(M[r + t + 1][r + l]) + 1);
+                strcpy(R, M[r + t + 1][r + l]);
+#ifdef DEBUG
+                printf("<L=%s, R=%s>", L, R);
+#endif
+                /* forall the pairs B ∈ L, C ∈ R do */
+                for (int it1 = 0; it1 < (signed int)strlen(L); it1++) {
+                    for (int it2 = 0; it2 < (signed int)strlen(R); it2++) {
+                        char BC[10] = {0};
+                        sprintf(BC, "%c%c", L[it1], R[it2]);
+#ifdef DEBUG
+                        printf("\n\t<%s>\n", BC);
+                        fflush(stdout);
+#endif
+                        /* foreach A->BC add A to M[r, r + l] */
+                        char *temp = match_production(BC);
+                        if (temp) {
+#ifdef DEBUG
+                            printf("\n%s<<<<\n", temp);
+#endif
+                            if (!strcmp(M[r][r + l], ""))
+                                M[r][r + l] = temp;
+                            else {
+                                M[r][r + l] = realloc(M[r][r + l],
+                                        strlen(M[r][r + l]) + strlen(temp) + 1);
+                                strcat(M[r][r + l], temp);
+                            }
+                        }
+#ifdef DEBUG
+                        putchar('\n');
+                        puts("-----------------------------");
+                        for (int i = 0; i < len; i++) {
+                            for (int j = 0; j < len; j++) {
+                                fflush(stdout);
+                                if (M[i][j] != 0)
+                                    printf("%s   ", M[i][j]);
+                                else
+                                    printf("    ");
+                            }
+                            putchar('\n');
+                        }
+#endif
+                    }
+                }
+                if (!strcmp(L, "") || !strcmp(R, "")) {
+                    char BC[10] = {0};
+                    strcpy(BC, L);
+                    strcat(BC, R);
+#ifdef DEBUG
+                    printf("\n\t<%s>\n", BC);
+                    fflush(stdout);
+#endif
+                    /* foreach A->BC add A to M[r, r + l] */
+                    char *temp = match_production(BC);
+                    if (temp) {
+#ifdef DEBUG
+                        printf("\n%s<<<<\n", temp);
+#endif
+                        if (!strcmp(M[r][r + l], ""))
+                            M[r][r + l] = temp;
+                        else {
+                            M[r][r + l] = realloc(M[r][r + l],
+                                    strlen(M[r][r + l]) + strlen(temp) + 1);
+                            strcat(M[r][r + l], temp);
+                        }
+                    }
+#ifdef DEBUG
+                    putchar('\n');
+                    puts("-----------------------------");
+                    for (int i = 0; i < len; i++) {
+                        for (int j = 0; j < len; j++) {
+                            fflush(stdout);
+                            if (M[i][j] != 0)
+                                printf("%s   ", M[i][j]);
+                            else
+                                printf("    ");
+                        }
+                        putchar('\n');
+                    }
+#endif
+                }
+                free(L);
+                free(R);
             }
         }
     }
 
-    return 1;
+    /* If start symbol S is in M[0][len-1]: */
+    if (strchr(M[0][len-1], 'S'))
+        return 1;
+    return 0;
 }
 
 
@@ -126,7 +206,11 @@ int main(int argc, char **argv)
     fprintf(stdout, "Enter the input string: ");
     scanf("%99s", in_string);
 
-    parseCYK(in_string, grammar);
+    int result = parseCYK(in_string);
+    if (result)
+        printf("Input string \"%s\" is parsed successfully.\n", in_string);
+    else
+        printf("Parsing failed.\n");
 
     return 0;
 }
