@@ -8,7 +8,7 @@ The program takes as input
 The algorithm is:
  - implemented with dynamic programming
 
-Current version is *supposed* to work.
+Current version is *supposed* to work (not serious tests taken).
 
 
 ## Test
