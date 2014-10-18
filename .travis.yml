@@ -2,7 +2,11 @@ language: c
 compiler:
   - gcc
   - clang
-before_install:
-  - sudo apt-get update -qq
-  - sudo apt-get install -y libxml2
+before_script:
+  - wget ftp://xmlsoft.org/libxml2/libxml2-sources-2.6.29.tar.gz
+  - tar -xvzf libxml2-sources-2.6.29.tar.gz
+  - cd libxml2-2.6.29
+  - ./configure --prefix=/usr/local/libxml2
+  - make
+  - sudo make install
 script: make
