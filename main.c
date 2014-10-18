@@ -1,7 +1,6 @@
 /**********************#############################***************************
  *                      CYK Parser for CNF Grammars                           *
  *                      ###########################                           *
- * Ioannidis Christos, hrioan@inf.uth.gr                                      *
  * Konstadelias Ioannis, konstadel@inf.uth.gr                                 *
  * University of Thessaly, 2014                                               *
  *										                                      *
